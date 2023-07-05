@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Challenges {% endblock %}</h1>
+    {% for category in categories %}
+    <button type="button" class="collapsible">{{ category[1] }} - {{ category[2] }}</button>
+    <div class='content'>
+        {% for challenge in challenges %}
+            {%if challenge[3] == category[1]%}
+            <h3>{{ challenge[0] }}</h3>
+                <i><p>{{ challenge[-1] }}. {{ challenge[2] }} - {{ challenge[1]}}pts</p></i>
+            {%endif%}
+        {%endfor%}
+    </div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>{% block title %} Leaderboard {% endblock %}</h1>
+    {% for user in users %}
+    <button type="button" class="collapsible">{{ user[3]}} - 
+        {% for point in points %}
+        {%if user[0] == point[1]%}
+            {{ point[0] }}
+        {%endif%}
+        {%endfor%}
+    </button>
+    <div class='content'>
+        {% for record in records %}
+            {%if record[2] == user[0]%}
+            <h3>{{ record[0] }}</h3>
+                <i><p>{{ record[1] }} - {{ record[3]}}pts</p></i>
+            {%endif%}
+        {%endfor%}
+    </div>
+    {%endfor%}
+{% endblock %}
