@@ -8,8 +8,8 @@ def get_db_connection():
     conn = psycopg2.connect(
             host="35.184.207.65",
             database="GoS",
-            user=os.environ['DB_USERNAME'],
-            password=os.environ['DB_PASSWORD'].replace('"', ''))
+            user="gos_read_flask",
+            password="no&4*w2C3Bdw")
     return conn
 
 @app.route('/')
