@@ -16,7 +16,7 @@ def get_db_connection():
 def index():
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute('SELECT SUM(points) + SUM(additional_points), r.user_id FROM gos.records r LEFT JOIN gos.challenges c ON c.challenge_id = r.challenge_id GROUP BY user_id;')
+    cur.execute('SELECT COALESCE(SUM(r.additional_points) + SUM(c.points), 0) AS points, u.user_id AS user, u.user_firstname AS name FROM gos.users u LEFT JOIN gos.records r ON r.user_id = u.user_id LEFT JOIN gos.challenges c ON r.challenge_id = c.challenge_id GROUP BY u.user_id, u.user_firstname ORDER BY points DESC;')
     points = cur.fetchall()
     cur.execute('SELECT u.user_id, u.user_firstname, u.user_lastname, u.user_name, u.active, u.password, u.email FROM gos.users u;')
     users = cur.fetchall()
@@ -45,7 +45,7 @@ def challenges():
 def leaderboard():
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute('SELECT SUM(points) + SUM(additional_points), r.user_id FROM gos.records r LEFT JOIN gos.challenges c ON c.challenge_id = r.challenge_id GROUP BY user_id;')
+    cur.execute('SELECT COALESCE(SUM(r.additional_points) + SUM(c.points), 0) AS points, u.user_id AS user, u.user_firstname AS name FROM gos.users u LEFT JOIN gos.records r ON r.user_id = u.user_id LEFT JOIN gos.challenges c ON r.challenge_id = c.challenge_id GROUP BY u.user_id, u.user_firstname ORDER BY points DESC;')
     points = cur.fetchall()
     cur.execute('SELECT u.user_id, u.user_firstname, u.user_lastname, u.user_name, u.active, u.password, u.email FROM gos.users u;')
     users = cur.fetchall()
