@@ -101,6 +101,7 @@ def metrics():
     p2.vbar(x='category', top='points', width=0.5, source=hsc_cleaned_data)
     p2.xgrid.grid_line_color = None
     p2.y_range.start = 0
+    p2.xaxis.major_label_orientation = pi/4
 
     # Third Chart - Most Popular Challenges
     challenge = [mpc[c][1] for c in range(len(mpc))]
@@ -118,6 +119,7 @@ def metrics():
     p3.vbar(x='challenge', top='instances', width=0.5, source=mpc_cleaned_data)
     p3.xgrid.grid_line_color = None
     p3.y_range.start = 0
+    p3.xaxis.major_label_orientation = pi/4
   
     # Fourth Chart - Overall point delta query
     p4 = figure(height=350, sizing_mode="stretch_width", x_axis_type="datetime", y_range=(0,max([opdq[i][0] for i in range(len(opdq))]) + 5))
