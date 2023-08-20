@@ -11,6 +11,7 @@ def readConf(conf='config.ini', sections='postgresql'):
             databaseOpts[d[0]] = d[1]
         return databaseOpts
 
+
 def get_db_connection():
     params = readConf()
     conn = psycopg2.connect(**params)

@@ -42,3 +42,21 @@ def most_popular_challenges(cur):
     cur.execute('SELECT count(records.challenge_id) AS instances, challenges.challenge_name FROM gos.records LEFT JOIN gos.challenges ON challenges.challenge_id = records.challenge_id GROUP BY challenges.challenge_name ORDER BY instances DESC LIMIT 10;')
     mpc = cur.fetchall()
     return mpc
+
+def get_username_by_email(cur, email):
+    cur.execute(f'SELECT users.user_name, users.user_id FROM gos.users WHERE email = \'{email}\' and active = true LIMIT 1;')
+    ube = cur.fetchall()
+    return ube
+
+def get_password_by_username(cur, user):
+    cur.execute(f'SELECT users.password FROM gos.users WHERE user_name = \'{user}\' and active = true LIMIT 1;')
+    ube = cur.fetchall()
+    return ube
+
+def update_password_by_email(cur, email, hashed_pword):
+    cur.execute(f'UPDATE gos.users SET password=\'{hashed_pword}\' WHERE email =\'{email}\';')
+
+def _user(cur, id):
+    cur.execute(f'SELECT user_id, email, user_name, password FROM gos.users WHERE user_id = {id} LIMIT 1')
+    _u = cur.fetchall()
+    return _u

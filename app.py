@@ -1,8 +1,11 @@
 import random
 import datetime
-from flask import Flask, render_template
-from connection import get_db_connection
-from queries import points_query, user_query, records_query, categories_query, challenges_query, overall_pd_query, overall_points_by_type, highest_scoring_categories, most_popular_challenges
+from models import User
+from flask import Flask, render_template, url_for, redirect, request, flash
+from flask_login import LoginManager, login_user, login_required, current_user, logout_user
+from connection import get_db_connection, readConf
+from queries import points_query, user_query, records_query, categories_query, challenges_query, overall_pd_query, overall_points_by_type, highest_scoring_categories, most_popular_challenges, get_username_by_email, get_password_by_username, update_password_by_email, _user
+from werkzeug.security import generate_password_hash, check_password_hash
 from bokeh.embed import components
 from bokeh.plotting import figure
 from bokeh.transform import cumsum
@@ -11,8 +14,57 @@ from math import pi
 import pandas as pd
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = readConf(sections='flask')['secret_key']
+login_manager = LoginManager()
+login_manager.login_view = 'login'
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    u_res = _user(cur, id)
+    cur.close()
+    conn.close()
+    return User(u_res[0][0], u_res[0][1], u_res[0][2], u_res[0][3])
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/login', methods=['POST'])
+def login_post():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    email = request.form.get('email')
+    password = request.form.get('password')
+    remember = True if request.form.get('remember') else False
+    user = get_username_by_email(cur, email)
+    if not user:
+        flash('Please check your login details and try again.')
+        cur.close()
+        conn.close()
+        return redirect(url_for('login'))
+    pword = get_password_by_username(cur, user[0][0])
+    if not pword or not check_password_hash(pword[0][0], password):
+        flash('Please check your login details and try again.')
+        cur.close()
+        conn.close()
+        return redirect(url_for('login'))
+    _u = _user(cur, user[0][1])
+    login_user(User(_u[0][0], _u[0][1], _u[0][2], _u[0][3]), remember=remember)
+    cur.close()
+    conn.close()
+    return redirect(url_for('leaderboard'))
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 
 @app.route('/')
+@login_required
 def index():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -25,6 +77,7 @@ def index():
 
 
 @app.route('/challenges')
+@login_required
 def challenges():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -36,6 +89,7 @@ def challenges():
     return render_template('challenges.html', categories=categories, challenges=challenges)
 
 @app.route('/leaderboard')
+@login_required
 def leaderboard():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -47,6 +101,7 @@ def leaderboard():
     return render_template('leaderboard.html', points=points, users=users, records=records)
 
 @app.route('/metrics')
+@login_required
 def metrics():
     #Open conn
     conn = get_db_connection()
@@ -144,3 +199,22 @@ def metrics():
         script=[script1, script2, script3, script4],
         div=[div1, div2, div3, div4],
     )
+
+@app.route('/update_password')
+@login_required
+def update_password():
+    return render_template('update_password.html')
+
+@app.route('/update_password', methods=['POST'])
+def update_password_post():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    email = request.form.get('email')
+    password=generate_password_hash(request.form.get('password'), method='sha256')
+    update_password_by_email(cur, current_user.email, password)
+    conn.commit()
+    cur.close()
+    conn.close()
+    return redirect(url_for('login'))
+
+
