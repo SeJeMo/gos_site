@@ -1,10 +1,11 @@
 import random
 import datetime
+import json
 from models import User
 from flask import Flask, render_template, url_for, redirect, request, flash
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from connection import get_db_connection, readConf
-from queries import points_query, user_query, records_query, categories_query, challenges_query, overall_pd_query, overall_points_by_type, highest_scoring_categories, most_popular_challenges, get_username_by_email, get_password_by_username, update_password_by_email, _user
+from queries import points_query, user_query, records_query, categories_query, challenges_query, overall_pd_query, overall_points_by_type, highest_scoring_categories, most_popular_challenges, get_username_by_email, get_password_by_username, update_password_by_email, _user, get_categories_for_dropdown, get_challenges_for_dropdown, submit_record
 from werkzeug.security import generate_password_hash, check_password_hash
 from bokeh.embed import components
 from bokeh.plotting import figure
@@ -216,5 +217,42 @@ def update_password_post():
     cur.close()
     conn.close()
     return redirect(url_for('login'))
+
+@app.route('/submit_challenge')
+@login_required
+def submit_challenge():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    #Categories
+    ccfd = get_categories_for_dropdown(cur)
+    #Challenges
+    cfd = get_challenges_for_dropdown(cur)
+    #c = [{'Name': str(challenge[1]).replace("'", '').replace('"', '').replace('\\', ''), 'Id': challenge[0], 'Description':str(challenge[2]).replace("'", '').replace('"', '').replace('\\', ''), 'Points':challenge[3], 'Category Id': challenge[4]} for challenge in cfd]
+    c = []
+    for challenge in cfd:
+        c.append({'Name': str(challenge[1]), 'Id': int(challenge[0]), 'Description':str(challenge[2]), 'Points':int(challenge[3]), 'Category Id': int(challenge[4])})
+    
+    cur.close()
+    conn.close()
+    return render_template('/submit_challenge.html', categories=ccfd, challenges = c)
+
+@app.route('/submit_challenge', methods=['POST'])
+def submit_challenge_post():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cid = request.form.get('challenge_list')
+    uid = current_user.id
+    addpts = request.form.get("additional_pts")
+    if addpts == '':
+        addpts=0
+    else:
+        addpts = int(addpts)
+    d = datetime.datetime.now()
+    d = d.strftime("%m/%d/%Y")
+    submit_record(cur, d, uid, cid, addpts)
+    conn.commit()
+    cur.close()
+    conn.close()
+    return redirect(url_for('leaderboard'))
 
 

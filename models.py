@@ -19,3 +19,6 @@ class User(UserMixin):
 
     def is_authenticated(self):
         return True
+    
+    def get_p_name(self):
+        return self.name

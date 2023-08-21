@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>{% block title %} Completed Challenge {% endblock %}</h1>
+    <div class="column is-4 is-offset-4"> 
+        <div class="box">
+            <form method="POST" action="/submit_challenge">
+                <div class="field">
+                    <label for="category_list">Select a Series</label>
+                    <select id="category_list" name="category_list">
+                        {% for category in categories %}
+                        <option value="{{category[0]}}">{{category[1]}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="table-wrapper">
+                    <label for="extra_info">Series Info</label>
+                    <table id="extra_info" name="extra_info" class="fl-table">
+                        <tbody id="extra_info_body"><tr><th>Challenge Name</th><th>Challenge Description</th><th>Points</th></tr></tbody>
+                    </table>
+                </div>
+                <div class="field">
+                    <label for="challenge_list">Select a Challenge</label>
+                    <select id="challenge_list" name="challenge_list" label="Select Challenge">
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="additional_pts">Request Bonus Points</label>
+                    <input type="number" id="additional_pts" name="additional_pts"/>
+                </div>
+                <button class="button is-block is-info is-large is-fullwidth">Submit this Form</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        function getAssociatedChallenges(category_id){
+            var challenges = {{ challenges|tojson }}
+            var opts = ''
+            var tb_info ='<tr><th>Challenge Name</th><th>Challenge Description</th><th>Points</th></tr>'
+            const cl = document.getElementById('challenge_list')
+            const tbdy = document.getElementById('extra_info_body')
+            for (var challenge in challenges){
+                if (challenges[challenge]['Category Id'] == category_id){
+                    opts += '<option value="' + challenges[challenge]['Id'] + '">' + challenges[challenge]['Name'] + '</option>'
+                    tb_info += '<tr><td>' + challenges[challenge]['Name'] + '</td><td>' + challenges[challenge]['Description'] + '</td><td>' + challenges[challenge]['Points'] + '</td></tr>'
+                }
+            }
+            cl.innerHTML = opts;
+            tbdy.innerHTML = tb_info;
+        }
+    
+        const cat_list = document.getElementById('category_list')
+        cat_list.addEventListener('change', e=>{
+            const val = e.target.value
+            if(val){
+                getAssociatedChallenges(val)
+            }
+        })
+        cat_list.addEventListener('load', e=>{
+            const e_val = e.target.value
+            if(e_val){
+                getAssociatedChallenges(e_val)
+            }
+        })
+    </script>
+{% endblock %}
