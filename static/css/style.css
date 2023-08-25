@@ -16,24 +16,40 @@ h2{
 /* Table Styles */
 
 .table-wrapper{
-  margin: 10px 70px 70px;
-  box-shadow: 0px 35px 50px rgba( 0, 0, 0, 0.2 );
+  width: 100%;
+  overflow-x: hidden; /* Enable horizontal scrolling on small screens */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a shadow */
+  position: relative; /* Add position relative for hiding scrollbar */
+}
+
+.fl-table tbody::-webkit-scrollbar {
+  width: 0.5em; /* Adjust as needed */
+  background-color: transparent;
 }
 
 .fl-table {
-  border-radius: 5px;
   font-size: 12px;
   font-weight: normal;
   border: none;
-  border-collapse: collapse;
-  width: 100%;
   max-width: 100%;
   background-color: white;
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
 }
+.fl-table tbody {
+  display: block;
+  max-height: 400px; /* Adjust as needed */
+  overflow-y: scroll;
+}
+
 
 .fl-table td, .fl-table th {
   text-align: center;
-  padding: 8px;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  white-space: normal; /* Allow line breaks */
 }
 
 .fl-table td {
@@ -56,71 +72,49 @@ h2{
 .fl-table tr:nth-child(even) {
   background: #F8F8F8;
 }
+/* SELECT DROPDOWN */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #ffffff;
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 16px;
+  width: 100%;
+  max-width: 300px; /* You can adjust the max-width as needed */
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+/* Styles for the arrow icon */
+select::-ms-expand {
+  display: none;
+}
+
+select::after {
+  content: '\25BC'; /* Unicode down arrow character */
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
 
 /* Responsive */
 
-@media (max-width: 767px) {
-  .fl-table {
-      display: block;
-      width: 100%;
+@media screen and (max-width: 768px) {
+  select {
+    max-width: 400px; /* Adjust as needed */
   }
-  .table-wrapper:before{
-      content: "Scroll horizontally >";
-      display: block;
-      text-align: right;
-      font-size: 11px;
-      color: white;
-      padding: 0 0 10px;
+  /* Adjust styles for mobile view */
+  .table-container {
+    overflow-x: scroll; /* Allow horizontal scrolling for mobile */
   }
-  .fl-table thead, .fl-table tbody, .fl-table thead th {
-      display: block;
-  }
-  .fl-table thead th:last-child{
-      border-bottom: none;
-  }
-  .fl-table thead {
-      float: left;
-  }
-  .fl-table tbody {
-      width: auto;
-      position: relative;
-      overflow-x: auto;
-  }
-  .fl-table td, .fl-table th {
-      padding: 20px .625em .625em .625em;
-      height: 60px;
-      vertical-align: middle;
-      box-sizing: border-box;
-      overflow-x: hidden;
-      overflow-y: auto;
-      width: 120px;
-      font-size: 13px;
-      word-wrap: break-word;
-      text-overflow: ellipsis;
-  }
-  .fl-table thead th {
-      text-align: left;
-      border-bottom: 1px solid #f7f7f9;
-  }
-  .fl-table tbody tr {
-      display: table-cell;
-  }
-  .fl-table tbody tr:nth-child(odd) {
-      background: none;
-  }
-  .fl-table tr:nth-child(even) {
-      background: transparent;
-  }
-  .fl-table tr td:nth-child(odd) {
-      background: #F8F8F8;
-      border-right: 1px solid #E6E4E4;
-  }
-  .fl-table tr td:nth-child(even) {
-      border-right: 1px solid #E6E4E4;
-  }
-  .fl-table tbody td {
-      display: block;
-      text-align: center;
+
+  th, td {
+    padding: 8px;
   }
 }
 
@@ -165,3 +159,49 @@ h1 {
     transition: max-height 0.2s ease-out;
     background-color: #f1f1f1;
   }
+
+
+  /* Base styles for the login form */
+.login-container {
+  width: 100%;
+  max-width: 400px; /* Adjust as needed */
+  margin: 0 auto;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: #ffffff;
+}
+
+/* Input and button styles */
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Media query for responsiveness */
+@media screen and (max-width: 768px) {
+  /* Adjust styles for mobile view */
+  .login-container {
+    padding: 15px;
+  }
+}
