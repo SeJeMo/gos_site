@@ -57,6 +57,14 @@ def get_challenges_for_dropdown(cur):
 def submit_record(cur, d, uid, cid, addpts):
     cur.execute(f'INSERT INTO gos.records(time_submitted, user_id, challenge_id, verified, additional_points, gos_year_id, precedence_ref, post_id) VALUES (\'{d}\', {uid}, {cid}, false, {addpts}, -1, -1, -1);')
 
+def get_pending_submissions(cur):
+    cur.execute('SELECT record_id, user_name, points,additional_points,challenge_name,challenge_desc,category_name, users.user_id FROM gos.records LEFT JOIN gos.challenges ON challenges.challenge_id = records.challenge_id LEFT JOIN gos.challenge_categories ON challenge_categories.category_id = challenges.category_id LEFT JOIN gos.users ON users.user_id = records.user_id WHERE records.verified = FALSE;')
+    pend = cur.fetchall()
+    return pend
+
+def update_pending_submission(cur, record_id):
+    cur.execute(f'UPDATE gos.records SET verified=true WHERE record_id = {record_id};')
+
 ###USER MANAGEMENT AND LOGIN###
 def get_username_by_email(cur, email):
     cur.execute(f'SELECT users.user_name, users.user_id FROM gos.users WHERE email = \'{email}\' and active = true LIMIT 1;')
@@ -75,3 +83,6 @@ def _user(cur, id):
     cur.execute(f'SELECT user_id, email, user_name, password FROM gos.users WHERE user_id = {id} LIMIT 1')
     _u = cur.fetchall()
     return _u
+
+
+

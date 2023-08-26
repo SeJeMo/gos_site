@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Pending Submissions {% endblock %}</h1>
+    <div class="floating-container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="error-message">
+                    {{ messages[0] }}
+                </div>
+            {% endif %}
+        {% endwith %}
+    {% for sub in data %}
+        <div class="floating-div">
+            <div class="content-wrapper">
+                <p class="challenge-category">{{ sub['Category Name'] }}</p>
+                <h2 class="challenge-title">{{ sub['Challenge Name']}}</h2>
+                <p class="user-name">User: {{ sub['User Name'] }}</p>
+                <div class="points-container">
+                    <p class="points-value">Points: {{ sub['Points'] }}</p>
+                    <p class="requested-bonus">Bonus Points: {{ sub['Bonus Points']}}</p>
+                </div>
+            </div>
+            <div class="text-container">
+                <p>{{ sub['Challenge Description'] }}</p>
+            </div>
+            <div class="form-container">
+                <form method="POST" action="/pending_submissions">
+                    <label>
+                        <input type="checkbox" name="confirm" required>
+                        I confirm I've seen sufficient evidence to approve this challenge
+                    </label>
+                    <button type="submit">Approve Challenge</button>
+                    <label class="invisible-label" for="hidden-data1">Hidden Data 1</label>
+                    <input type="hidden" id="hidden-data1" name="Record Id" value="{{sub['Record Id']}}">
+                    <label class="invisible-label" for="hidden-data2">Hidden Data 2</label>
+                    <input type="hidden" id="hidden-data2" name="User Id" value="{{sub['User Id']}}">
+                </form>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+{% endblock %}
