@@ -104,7 +104,7 @@ select::after {
 
 /* Responsive */
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 760px) {
   /* Adjust styles for mobile view */
   .navbar {
     flex-direction: column;
