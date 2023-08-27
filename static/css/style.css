@@ -3,7 +3,6 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
 }
-
 h2{
   text-align: center;
   font-size: 18px;
@@ -12,21 +11,17 @@ h2{
   color: white;
   padding: 30px 0;
 }
-
 /* Table Styles */
-
 .table-wrapper{
   width: 100%;
   overflow-x: hidden; /* Enable horizontal scrolling on small screens */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a shadow */
   position: relative; /* Add position relative for hiding scrollbar */
 }
-
 .fl-table tbody::-webkit-scrollbar {
   width: 0.5em; /* Adjust as needed */
   background-color: transparent;
 }
-
 .fl-table {
   font-size: 12px;
   font-weight: normal;
@@ -43,32 +38,25 @@ h2{
   max-height: 400px; /* Adjust as needed */
   overflow-y: scroll;
 }
-
-
 .fl-table td, .fl-table th {
   text-align: center;
   padding: 12px;
   border-bottom: 1px solid #ddd;
   white-space: normal; /* Allow line breaks */
 }
-
 .fl-table td {
   border-right: 1px solid #f8f8f8;
   font-size: 12px;
   word-wrap: break-word;
 }
-
 .fl-table thead th {
   color: #ffffff;
   background: #4FC3A1;
 }
-
-
 .fl-table thead th:nth-child(odd) {
   color: #ffffff;
   background: #324960;
 }
-
 .fl-table tr:nth-child(even) {
   background: #F8F8F8;
 }
@@ -87,12 +75,10 @@ select {
   box-sizing: border-box;
   cursor: pointer;
 }
-
 /* Styles for the arrow icon */
 select::-ms-expand {
   display: none;
 }
-
 select::after {
   content: '\25BC'; /* Unicode down arrow character */
   position: absolute;
@@ -101,43 +87,8 @@ select::after {
   transform: translateY(-50%);
   pointer-events: none;
 }
-
 /* Responsive */
-
-@media (max-width: 760px) {
-  /* Adjust styles for mobile view */
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .navbar .icon {
-    display: block; /* Always visible */
-  }
-  .navbar-links {
-    display: none;
-    width: 100%;
-  }
-  .navbar-links .active {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .navbar .responsive .icon {
-    float: none;
-    display: block;
-    text-align: right;
-  }
-
-  .navbar .responsive a {
-    float: none;
-    display: block;
-    text-align: center;
-  }
-  .login-container {
-    padding: 15px;
-  }
+@media screen and (max-width: 768px) {
   select {
     max-width: 400px; /* Adjust as needed */
   }
@@ -145,12 +96,10 @@ select::after {
   .table-container {
     overflow-x: scroll; /* Allow horizontal scrolling for mobile */
   }
-
   th, td {
     padding: 8px;
   }
 }
-
 h1 {
     border: 2px #eee solid;
     color: brown;
@@ -168,11 +117,11 @@ h1 {
     outline: none;
     font-size: 15px;
   }
-  
+
   .collapsible .active:after {
     content: "\2212";
   }
-  
+
   .content {
     padding: 0 18px;
     max-height: 0;
@@ -180,8 +129,6 @@ h1 {
     transition: max-height 0.2s ease-out;
     background-color: #f1f1f1;
   }
-
-
   /* Base styles for the login form */
 .login-container {
   width: 100%;
@@ -192,7 +139,6 @@ h1 {
   border-radius: 8px;
   background-color: #ffffff;
 }
-
 /* Input and button styles */
 input[type="text"],
 input[type="password"],
@@ -214,9 +160,15 @@ input[type="email"] {
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
 }
-
 button:hover {
   background-color: #0056b3;
+}
+/* Media query for responsiveness */
+@media screen and (max-width: 768px) {
+  /* Adjust styles for mobile view */
+  .login-container {
+    padding: 15px;
+  }
 }
 
 .navbar {
@@ -255,114 +207,43 @@ button:hover {
   text-align: center;
   width: 100%;
 }
-/* Floating div for pending submissions */
 
-.floating-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 1200px; /* Adjust as needed */
-  margin: 0 auto; /* Center on the page */
-  padding: 0 20px; /* Add some space on the sides */
+/* Media query for responsiveness */
+@media screen and (max-width: 768px) {
+  /* Adjust styles for mobile view */
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar .icon {
+    display: block; /* Always visible */
+  }
+  .navbar-links {
+    display: none;
+    width: 100%;
+  }
+  .navbar-links.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .navbar.responsive .icon {
+    float: none;
+    display: block;
+    text-align: right;
+  }
+
+  .navbar.responsive a {
+    float: none;
+    display: block;
+    text-align: center;
+  }
 }
 
-.floating-div {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
-  padding: 20px;
-  width: 100%;
-  text-align: center;
-  margin-bottom: 20px;
-  transition: transform 0.3s; /* Added transition for a subtle effect */
-}
-
-.floating-div h2 {
-  margin-top: 0;
-  font-size: 1.5rem;
-  color: #333;
-}
-
-.floating-div .challenge-category {
-  color: #777;
-  margin: 0;
-}
-
-.floating-div .challenge-title {
-  font-size: 1.5rem;
-  margin: 5px 0;
-  color: #333;
-}
-
-.floating-div .user-name, .floating-div .points-value, .floating-div .requested-bonus {
-  color: #444;
-  margin: 0;
-}
-
-.floating-div .points-container {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-}
-
-.floating-div .content-wrapper {
-  margin-bottom: 20px;
-}
-
-.floating-div .content-wrapper .content-title {
-  font-size: 1.5rem;
-  margin: 0;
-  color: #333;
-}
-
-.floating-div .content-wrapper .content-subtitle {
-  color: #777;
-  margin: 0;
-}
-
-.floating-div p {
-  color: #777;
-}
-
-.floating-div .text-container {
-  color: #444;
-}
-
-.floating-div .form-container {
-  margin-top: 20px;
-}
-
-.floating-div .form-container form {
-  display: flex;
-  align-items: center;
-}
-
-.floating-div .form-container label {
-  margin-right: 10px;
-}
-
-.floating-div .form-container form{
-  display: flex;
-  flex-direction: column;
-}
-
-.floating-div .form-container input[type="checkbox"] {
-  margin-right: 5px;
-}
-
-.floating-div .form-container .invisible-label {
-  display: none;
-}
 .field {
   padding: 10px;
   margin-bottom: 10px; /* Add margin to space it away from the button */
   margin-top: 10px; /* Same for select box */
-}
-.error-message {
-  background-color: #f44336; /* Red background color */
-  color: #fff; /* White text color */
-  text-align: center;
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 8px;
 }
