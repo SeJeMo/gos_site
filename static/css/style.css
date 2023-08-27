@@ -247,3 +247,110 @@ button:hover {
   margin-bottom: 10px; /* Add margin to space it away from the button */
   margin-top: 10px; /* Same for select box */
 }
+
+
+.floating-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1200px; /* Adjust as needed */
+  margin: 0 auto; /* Center on the page */
+  padding: 0 20px; /* Add some space on the sides */
+}
+
+.floating-div {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 20px;
+  transition: transform 0.3s; /* Added transition for a subtle effect */
+}
+
+.floating-div h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.floating-div .challenge-category {
+  color: #777;
+  margin: 0;
+}
+
+.floating-div .challenge-title {
+  font-size: 1.5rem;
+  margin: 5px 0;
+  color: #333;
+}
+
+.floating-div .user-name, .floating-div .points-value, .floating-div .requested-bonus {
+  color: #444;
+  margin: 0;
+}
+
+.floating-div .points-container {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+.floating-div .content-wrapper {
+  margin-bottom: 20px;
+}
+
+.floating-div .content-wrapper .content-title {
+  font-size: 1.5rem;
+  margin: 0;
+  color: #333;
+}
+
+.floating-div .content-wrapper .content-subtitle {
+  color: #777;
+  margin: 0;
+}
+
+.floating-div p {
+  color: #777;
+}
+
+.floating-div .text-container {
+  color: #444;
+}
+
+.floating-div .form-container {
+  margin-top: 20px;
+}
+
+.floating-div .form-container form {
+  display: flex;
+  align-items: center;
+}
+
+.floating-div .form-container label {
+  margin-right: 10px;
+}
+
+.floating-div .form-container form{
+  display: flex;
+  flex-direction: column;
+}
+
+.floating-div .form-container input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.floating-div .form-container .invisible-label {
+  display: none;
+}
+
+.error-message {
+  background-color: #f44336; /* Red background color */
+  color: #fff; /* White text color */
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
