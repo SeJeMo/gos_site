@@ -47,18 +47,16 @@
             cl.innerHTML = opts;
             tbdy.innerHTML = tb_info;
         }
-    
+        window.addEventListener('load', () => {
+            const cat_list = document.getElementById('category_list');
+            cat_list.dispatchEvent(new Event('change'));
+        });
+
         const cat_list = document.getElementById('category_list')
         cat_list.addEventListener('change', e=>{
             const val = e.target.value
             if(val){
                 getAssociatedChallenges(val)
-            }
-        })
-        cat_list.addEventListener('load', e=>{
-            const e_val = e.target.value
-            if(e_val){
-                getAssociatedChallenges(e_val)
             }
         })
     </script>
