@@ -1,18 +1,23 @@
-import random
 import datetime
 import json
-from models import User
-from flask import Flask, render_template, url_for, redirect, request, flash
-from flask_login import LoginManager, login_user, login_required, current_user, logout_user
-from connection import get_db_connection, readConf
-from queries import points_query, user_query, records_query, categories_query, challenges_query, overall_pd_query, overall_points_by_type, highest_scoring_categories, most_popular_challenges, get_username_by_email, get_password_by_username, update_password_by_email, _user, get_categories_for_dropdown, get_challenges_for_dropdown, submit_record, get_pending_submissions, update_pending_submission
-from werkzeug.security import generate_password_hash, check_password_hash
+import random
+from math import pi
+
+import pandas as pd
 from bokeh.embed import components
+from bokeh.palettes import Category20c
 from bokeh.plotting import figure
 from bokeh.transform import cumsum
-from bokeh.palettes import Category20c
-from math import pi
-import pandas as pd
+from flask import Flask, flash, redirect, render_template, request, url_for
+from flask_login import LoginManager, current_user, login_required, login_user, logout_user
+from models import User
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from connection import readConf
+from queries import (categories_query, challenges_query, get_categories_for_dropdown, get_challenges_for_dropdown,
+                     get_pending_submissions, get_password_by_username, get_username_by_email, highest_scoring_categories,
+                     most_popular_challenges, overall_pd_query, overall_points_by_type, points_query, records_query,
+                     update_pending_submission, _user, user_query,update_password_by_email,submit_record)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = readConf(sections='flask')['secret_key']
@@ -22,11 +27,7 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(id):
-    conn = get_db_connection()
-    cur = conn.cursor()
-    u_res = _user(cur, id)
-    cur.close()
-    conn.close()
+    u_res = _user(id)
     return User(u_res[0][0], u_res[0][1], u_res[0][2], u_res[0][3])
 
 @app.route('/login')
@@ -35,27 +36,19 @@ def login():
 
 @app.route('/login', methods=['POST'])
 def login_post():
-    conn = get_db_connection()
-    cur = conn.cursor()
     email = request.form.get('email')
     password = request.form.get('password')
     remember = True if request.form.get('remember') else False
-    user = get_username_by_email(cur, email)
+    user = get_username_by_email(email)
     if not user:
         flash('Please check your login details and try again.')
-        cur.close()
-        conn.close()
         return redirect(url_for('login'))
-    pword = get_password_by_username(cur, user[0][0])
+    pword = get_password_by_username(user[0][0])
     if not pword or not check_password_hash(pword[0][0], password):
         flash('Please check your login details and try again.')
-        cur.close()
-        conn.close()
         return redirect(url_for('login'))
-    _u = _user(cur, user[0][1])
+    _u = _user(user[0][1])
     login_user(User(_u[0][0], _u[0][1], _u[0][2], _u[0][3]), remember=remember)
-    cur.close()
-    conn.close()
     return redirect(url_for('leaderboard'))
 
 @app.route('/logout')
@@ -67,63 +60,42 @@ def logout():
 @app.route('/')
 @login_required
 def index():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    points = points_query(cur)
-    users = user_query(cur)
-    records = records_query(cur)
-    cur.close()
-    conn.close()
+    points = points_query()
+    users = user_query()
+    records = records_query()
     return render_template('leaderboard.html', points=points, users=users, records=records)
 
 
 @app.route('/challenges')
 @login_required
 def challenges():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    categories = categories_query(cur)
-    challenges = challenges_query(cur)
-    cur.close()
-    conn.close()
-
+    categories = categories_query()
+    challenges = challenges_query()
     return render_template('challenges.html', categories=categories, challenges=challenges)
 
 @app.route('/leaderboard')
 @login_required
 def leaderboard():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    points = points_query(cur)
-    users = user_query(cur)
-    records = records_query(cur)
-    cur.close()
-    conn.close()
+    points = points_query()
+    users = user_query()
+    records = records_query()
     return render_template('leaderboard.html', points=points, users=users, records=records)
 
 @app.route('/metrics')
 @login_required
 def metrics():
-    #Open conn
-    conn = get_db_connection()
-    cur = conn.cursor()
-
     # 1 Point by type breakdown
-    obpt = overall_points_by_type(cur)
+    obpt = overall_points_by_type()
 
     # 2 Highest scoring categories
-    hsc = highest_scoring_categories(cur)
+    hsc = highest_scoring_categories()
 
-    # 2 Highest scoring categories
-    mpc = most_popular_challenges(cur)
+    # 3 Most Popular Challenges
+    mpc = most_popular_challenges()
 
     # 4 - Overall Point Delta data
-    opdq = overall_pd_query(cur)
+    opdq = overall_pd_query()
     
-    # Clean up db connection
-    cur.close()
-    conn.close()
-
     # First Chart - Overall Points by type pie chart
     overall_pie_data = {}
     for t in obpt:
@@ -208,37 +180,24 @@ def update_password():
 
 @app.route('/update_password', methods=['POST'])
 def update_password_post():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    email = request.form.get('email')
     password=generate_password_hash(request.form.get('password'), method='sha256')
-    update_password_by_email(cur, current_user.email, password)
-    conn.commit()
-    cur.close()
-    conn.close()
+    update_password_by_email(current_user.email, password)
     return redirect(url_for('login'))
 
 @app.route('/submit_challenge')
 @login_required
 def submit_challenge():
-    conn = get_db_connection()
-    cur = conn.cursor()
     #Categories
-    ccfd = get_categories_for_dropdown(cur)
+    ccfd = get_categories_for_dropdown()
     #Challenges
-    cfd = get_challenges_for_dropdown(cur)
+    cfd = get_challenges_for_dropdown()
     c = []
     for challenge in cfd:
         c.append({'Name': str(challenge[1]), 'Id': int(challenge[0]), 'Description':str(challenge[2]), 'Points':int(challenge[3]), 'Category Id': int(challenge[4])})
-    
-    cur.close()
-    conn.close()
     return render_template('/submit_challenge.html', categories=ccfd, challenges = c)
 
 @app.route('/submit_challenge', methods=['POST'])
 def submit_challenge_post():
-    conn = get_db_connection()
-    cur = conn.cursor()
     cid = request.form.get('challenge_list')
     uid = current_user.id
     addpts = request.form.get("additional_pts")
@@ -248,20 +207,13 @@ def submit_challenge_post():
         addpts = int(addpts)
     d = datetime.datetime.now()
     d = d.strftime("%m/%d/%Y")
-    submit_record(cur, d, uid, cid, addpts)
-    conn.commit()
-    cur.close()
-    conn.close()
+    submit_record(d, uid, cid, addpts)
     return redirect(url_for('pending_submissions'))
 
 @app.route('/pending_submissions')
 @login_required
 def pending_submissions():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    pending = get_pending_submissions(cur)
-    cur.close()
-    conn.close()
+    pending = get_pending_submissions()
     pnd = []
     for sub in pending:
         pnd.append({'Record Id': sub[0], 'User Name': sub[1], 'Points': sub[2], 'Bonus Points': sub[3], 'Challenge Name': sub[4], 'Challenge Description': sub[5], 'Category Name': sub[6], 'User Id': sub[7]})
@@ -272,12 +224,7 @@ def pending_submissions_post():
     target_record = request.form.get('Record Id')
     target_user = request.form.get('User Id')
     if int(current_user.id) != int(target_user):
-        conn = get_db_connection()
-        cur = conn.cursor()
-        update_pending_submission(cur, target_record)
-        conn.commit()
-        cur.close()
-        conn.close()
+        update_pending_submission(target_record)
         return redirect(url_for('leaderboard'))
     else:
         flash('You are unable to approve that challenge because you seem to be the person who submitted it.')
