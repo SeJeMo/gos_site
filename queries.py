@@ -30,7 +30,9 @@ def points_query():
             FROM gos.users u 
             LEFT JOIN gos.records r ON r.user_id = u.user_id 
             LEFT JOIN gos.challenges c ON r.challenge_id = c.challenge_id 
-            WHERE r.verified = true GROUP BY u.user_id, u.user_firstname ORDER BY points DESC;
+            WHERE r.verified = true 
+            GROUP BY u.user_id, u.user_firstname 
+            ORDER BY points DESC;
             """
     with execute_query() as cur:
         cur.execute(query)
@@ -193,7 +195,7 @@ def submit_record(time_submitted, user_id, challenge_id, additional_points):
     with execute_query() as cur:
         cur.execute(query, values)
 
-def get_pending_submissions(cur):
+def get_pending_submissions():
     query = """
     SELECT record_id, user_name, points, additional_points, challenge_name, challenge_desc, category_name, users.user_id
     FROM gos.records
@@ -220,7 +222,8 @@ def update_pending_submission(record_id):
 ###USER MANAGEMENT AND LOGIN###
 def get_username_by_email(email):
     query = """
-    SELECT user_name, 
+    SELECT password,
+    user_name, 
     user_id 
     FROM gos.users 
     WHERE email = %s 
@@ -259,13 +262,14 @@ def update_password_by_email(email, hashed_pword):
 
 def _user(id):
     query = """
-    SELECT user_id, 
-    email, 
-    user_name, 
-    password 
+    SELECT user_id AS id, 
+    email AS email,
+    password AS password, 
+    user_name AS name
     FROM gos.users 
     WHERE user_id = %s 
-    LIMIT 1;"""
+    LIMIT 1;
+    """
     values = (id,)
     with execute_query() as cur:
         cur.execute(query, values)

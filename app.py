@@ -28,7 +28,7 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(id):
     u_res = _user(id)
-    return User(u_res[0][0], u_res[0][1], u_res[0][2], u_res[0][3])
+    return User(*u_res)
 
 @app.route('/login')
 def login():
@@ -38,17 +38,18 @@ def login():
 def login_post():
     email = request.form.get('email')
     password = request.form.get('password')
-    remember = True if request.form.get('remember') else False
+    remember = bool(request.form.get('remember'))
+
     user = get_username_by_email(email)
-    if not user:
+    if not user or not check_password_hash(user[0][0], password):  # Assuming user[0][0] holds the hashed password
         flash('Please check your login details and try again.')
         return redirect(url_for('login'))
-    pword = get_password_by_username(user[0][0])
-    if not pword or not check_password_hash(pword[0][0], password):
-        flash('Please check your login details and try again.')
-        return redirect(url_for('login'))
-    _u = _user(user[0][1])
-    login_user(User(_u[0][0], _u[0][1], _u[0][2], _u[0][3]), remember=remember)
+
+    user_id = user[0][2]
+    user_data = _user(user_id)
+    user_obj = User(*user_data)
+    login_user(user_obj, remember=remember)
+
     return redirect(url_for('leaderboard'))
 
 @app.route('/logout')
