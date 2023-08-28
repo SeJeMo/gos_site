@@ -73,5 +73,37 @@
             crossorigin="anonymous"></script>
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.2.2.min.js"
             crossorigin="anonymous"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+          const searchInput = document.getElementById("searchInput");
+          const collapsibleButtons = document.querySelectorAll(".collapsible");
+  
+          searchInput.addEventListener("input", function() {
+              const searchTerm = searchInput.value.trim().toLowerCase();
+  
+              collapsibleButtons.forEach(button => {
+                  const contentDiv = button.nextElementSibling;
+                  const buttonText = button.textContent.toLowerCase();
+                  const contentText = contentDiv.textContent.toLowerCase();
+                  const challengeName = contentDiv.querySelector("h3").textContent.toLowerCase();
+                  const challengeDescription = contentDiv.querySelector("i p").textContent.toLowerCase();
+  
+                  // Show/hide based on search term
+                  if (
+                      contentText.includes(searchTerm) ||
+                      buttonText.includes(searchTerm) ||
+                      challengeName.includes(searchTerm) ||
+                      challengeDescription.includes(searchTerm)
+                  ) {
+                      contentDiv.style.display = "block";
+                      button.style.display = "block";
+                  } else {
+                      contentDiv.style.display = "none";
+                      button.style.display = "none";
+                  }
+              });
+          });
+      });
+  </script>
 </body>
 </html>
