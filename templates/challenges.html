@@ -2,7 +2,10 @@
 
 {% block content %}
     <h1>{% block title %} Challenges {% endblock %}</h1>
-    <input type="text" id="searchInput" placeholder="Search challenges...">
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search challenges...">
+        <span id="clearSearch" class="clear-icon">&times;</span>
+    </div>
     {% for category in categories %}
     <button type="button" class="collapsible">{{ category[1] }} - {{ category[2] }}</button>
     <div class='content'>

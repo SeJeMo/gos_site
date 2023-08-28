@@ -354,3 +354,26 @@ button:hover {
   margin-bottom: 20px;
   border-radius: 8px;
 }
+
+/* Search bar styles */
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.clear-icon {
+  display: none;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 18px;
+  color: #999;
+}
